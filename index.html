@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TKJ Login</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Inter:wght@400;500;600&display=swap');
+
+:root {
+  --bg-deep: #0F1720;
+  --bg-panel: #16202C;
+  --bg-card: #1B2733;
+  --line: #2A3947;
+  --text-main: #E7ECF1;
+  --text-muted: #8A99A8;
+  --accent: #3DDC97;
+  --accent-dim: rgba(61, 220, 151, 0.15);
+  --danger: #E5484D;
+  --danger-dim: rgba(229, 72, 77, 0.15);
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--bg-deep);
+  color: var(--text-main);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+h1, h2 {
+  font-family: 'Space Grotesk', 'Inter', sans-serif;
+  margin: 0;
+}
+
+.config-trigger {
+  position: fixed;
+  top: 20px;
+  right: 24px;
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  color: var(--text-main);
+  border-radius: 8px;
+  font-size: 13px;
+  font-family: 'IBM Plex Mono', monospace;
+  cursor: pointer;
+  transition: border-color .15s ease, color .15s ease;
+}
+.config-trigger:hover { border-color: var(--accent); color: var(--accent); }
+.config-trigger svg { flex-shrink: 0; }
+
+.stage {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  min-height: 100vh;
+}
+
+.brand-panel {
+  position: relative;
+  overflow: hidden;
+  background: var(--bg-panel);
+  display: flex;
+  align-items: center;
+  padding: 64px 64px;
+  border-right: 1px solid var(--line);
+}
+
+.net-lines { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0.5; }
+.net-lines .l { stroke: var(--accent); stroke-width: 1; opacity: 0; animation: drawLine 1.8s ease forwards; }
+.net-lines .n { fill: var(--accent); opacity: 0; animation: popNode .4s ease forwards; }
+.l1 { animation-delay: .1s; } .l2 { animation-delay: .35s; } .l3 { animation-delay: .55s; }
+.l4 { animation-delay: .8s; } .l5 { animation-delay: 1s; }
+.net-lines .n:nth-of-type(1) { animation-delay: .1s; }
+@keyframes drawLine { from { opacity: 0; } to { opacity: .35; } }
+@keyframes popNode { from { opacity: 0; transform: scale(0); } to { opacity: .8; transform: scale(1); } }
+
+.brand-content { position: relative; z-index: 1; max-width: 420px; }
+
+.logo { display: flex; align-items: center; gap: 10px; margin-bottom: 28px; }
+.logo-word {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: 0.5px;
+  color: var(--accent);
+}
+
+.brand-content h1 {
+  font-size: 34px;
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--text-main);
+}
+
+.tagline {
+  margin-top: 18px;
+  color: var(--text-muted);
+  font-size: 15px;
+  line-height: 1.6;
+  max-width: 38ch;
+}
+
+.brand-meta {
+  list-style: none;
+  padding: 20px 0 0;
+  margin: 24px 0 0;
+  border-top: 1px solid var(--line);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 13px;
+}
+.brand-meta li { display: flex; justify-content: space-between; color: var(--text-main); }
+.brand-meta li span:first-child { color: var(--text-muted); }
+
+.status-pill {
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+}
+.status-off { background: var(--danger-dim); color: var(--danger); }
+.status-on { background: var(--accent-dim); color: var(--accent); }
+
+.form-panel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 360px;
+}
+
+.login-card h2 { font-size: 24px; }
+.sub { color: var(--text-muted); font-size: 13.5px; margin: 8px 0 26px; line-height: 1.5; }
+
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+.field span { font-size: 12.5px; color: var(--text-muted); }
+.field input {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 11px 12px;
+  color: var(--text-main);
+  font-size: 14px;
+  font-family: 'IBM Plex Mono', monospace;
+  width: 100%;
+}
+.field input:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.verify {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 20px 0 22px;
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+  cursor: pointer;
+}
+.verify input { margin-top: 3px; accent-color: var(--accent); width: 15px; height: 15px; flex-shrink: 0; }
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: #0B1710;
+  font-weight: 600;
+  font-size: 14.5px;
+  cursor: pointer;
+  transition: opacity .15s ease, transform .1s ease;
+}
+.btn-primary:disabled { opacity: .35; cursor: not-allowed; }
+.btn-primary:not(:disabled):hover { transform: translateY(-1px); }
+
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--text-muted);
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13.5px;
+}
+.btn-ghost:hover { border-color: var(--danger); color: var(--danger); }
+
+.form-message { min-height: 18px; font-size: 13px; margin: 14px 0 0; }
+.form-message.ok { color: var(--accent); }
+.form-message.err { color: var(--danger); }
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 10, 14, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 20px;
+}
+.modal {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 28px;
+  width: 100%;
+  max-width: 460px;
+}
+.modal-head { display: flex; align-items: center; justify-content: space-between; }
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+.icon-btn:hover { color: var(--text-main); }
+.modal-actions { display: flex; justify-content: space-between; gap: 12px; margin-top: 6px; }
+.modal-actions .btn-primary { width: auto; flex: 1; }
+
+@media (max-width: 860px) {
+  .stage { grid-template-columns: 1fr; }
+  .brand-panel { padding: 48px 28px; border-right: none; border-bottom: 1px solid var(--line); }
+  .form-panel { padding: 32px 24px; }
+  .field-row { grid-template-columns: 1fr; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .net-lines .l, .net-lines .n { animation: none; opacity: .35; }
+}
+</style>
+</head>
+<body>
+
+  <button id="btnConfig" class="config-trigger" type="button">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+      <circle cx="12" cy="12" r="3"></circle>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+    </svg>
+    Konfigurasi AWS
+  </button>
+
+  <main class="stage">
+
+    <section class="brand-panel">
+      <svg class="net-lines" viewBox="0 0 400 500" preserveAspectRatio="none" aria-hidden="true">
+        <line x1="40" y1="90" x2="180" y2="180" class="l l1"></line>
+        <line x1="180" y1="180" x2="330" y2="120" class="l l2"></line>
+        <line x1="180" y1="180" x2="120" y2="330" class="l l3"></line>
+        <line x1="120" y1="330" x2="300" y2="400" class="l l4"></line>
+        <line x1="330" y1="120" x2="300" y2="400" class="l l5"></line>
+        <circle cx="40" cy="90" r="4" class="n"></circle>
+        <circle cx="180" cy="180" r="5" class="n"></circle>
+        <circle cx="330" cy="120" r="4" class="n"></circle>
+        <circle cx="120" cy="330" r="4" class="n"></circle>
+        <circle cx="300" cy="400" r="5" class="n"></circle>
+      </svg>
+
+      <div class="brand-content">
+        <div class="logo">
+          <svg width="46" height="46" viewBox="0 0 46 46" fill="none">
+            <circle cx="10" cy="10" r="4" fill="#3DDC97"/>
+            <circle cx="36" cy="12" r="4" fill="#3DDC97"/>
+            <circle cx="23" cy="34" r="4" fill="#3DDC97"/>
+            <path d="M10 10 L23 34 M36 12 L23 34 M10 10 L36 12" stroke="#3DDC97" stroke-width="1.6" opacity="0.7"/>
+          </svg>
+          <span class="logo-word">TKJ</span>
+        </div>
+        <h1>Teknik Komputer<br>dan Jaringan</h1>
+        <p class="tagline">Portal akses internal jurusan. Setiap sesi masuk dicatat ke basis data untuk keperluan audit jaringan.</p>
+
+        <ul class="brand-meta">
+          <li><span>Penyimpanan</span>Amazon DynamoDB</li>
+          <li><span>Status koneksi</span><span id="configStatus" class="status-pill status-off">Belum dikonfigurasi</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="form-panel">
+      <form id="loginForm" class="login-card" novalidate>
+        <h2>Masuk ke akun</h2>
+        <p class="sub">Isi username dan password, lalu centang verifikasi untuk melanjutkan.</p>
+
+        <label class="field">
+          <span>Username</span>
+          <input type="text" id="username" name="username" autocomplete="username" required>
+        </label>
+
+        <label class="field">
+          <span>Password</span>
+          <input type="password" id="password" name="password" autocomplete="current-password" required>
+        </label>
+
+        <label class="verify">
+          <input type="checkbox" id="verifyCheck">
+          <span>Saya sudah memeriksa data yang saya masukkan dan mengonfirmasi login ini.</span>
+        </label>
+
+        <button type="submit" id="btnLogin" class="btn-primary" disabled>Masuk</button>
+
+        <p id="formMessage" class="form-message" role="status"></p>
+      </form>
+    </section>
+
+  </main>
+
+  <!-- Modal Konfigurasi AWS -->
+  <div id="configOverlay" class="overlay" hidden>
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="configTitle">
+      <div class="modal-head">
+        <h2 id="configTitle">Konfigurasi AWS</h2>
+        <button type="button" id="btnCloseConfig" class="icon-btn" aria-label="Tutup">&times;</button>
+      </div>
+      <p class="sub">Kredensial ini dipakai browser untuk menulis catatan login ke DynamoDB. Disimpan hanya di perangkat ini (localStorage).</p>
+
+      <form id="configForm">
+        <label class="field">
+          <span>Access Key ID</span>
+          <input type="text" id="accessKeyId" autocomplete="off" required>
+        </label>
+        <label class="field">
+          <span>Secret Access Key</span>
+          <input type="password" id="secretAccessKey" autocomplete="off" required>
+        </label>
+        <label class="field">
+          <span>Session Token (opsional)</span>
+          <input type="password" id="sessionToken" autocomplete="off">
+        </label>
+        <div class="field-row">
+          <label class="field">
+            <span>Region</span>
+            <input type="text" id="region" placeholder="ap-southeast-1" required>
+          </label>
+          <label class="field">
+            <span>Nama Tabel DynamoDB</span>
+            <input type="text" id="tableName" placeholder="tkj-login-log" required>
+          </label>
+        </div>
+
+        <p id="configMessage" class="form-message" role="status"></p>
+
+        <div class="modal-actions">
+          <button type="button" id="btnClearConfig" class="btn-ghost">Hapus konfigurasi</button>
+          <button type="submit" class="btn-primary">Simpan konfigurasi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1691.0.min.js"></script>
+  <script>
+    // ====== Elemen DOM ======
+    const btnConfig = document.getElementById('btnConfig');
+    const configOverlay = document.getElementById('configOverlay');
+    const btnCloseConfig = document.getElementById('btnCloseConfig');
+    const configForm = document.getElementById('configForm');
+    const configMessage = document.getElementById('configMessage');
+    const btnClearConfig = document.getElementById('btnClearConfig');
+    const configStatus = document.getElementById('configStatus');
+
+    const loginForm = document.getElementById('loginForm');
+    const verifyCheck = document.getElementById('verifyCheck');
+    const btnLogin = document.getElementById('btnLogin');
+    const formMessage = document.getElementById('formMessage');
+
+    const STORAGE_KEY = 'tkjAwsConfig';
+
+    // ====== Konfigurasi AWS tersimpan ======
+    function getSavedConfig() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      return raw ? JSON.parse(raw) : null;
+    }
+
+    function applyConfigToSdk(config) {
+      AWS.config.update({
+        accessKeyId: config.accessKeyId,
+        secretAccessKey: config.secretAccessKey,
+        sessionToken: config.sessionToken || undefined,
+        region: config.region
+      });
+    }
+
+    function refreshConfigStatus() {
+      const config = getSavedConfig();
+      if (config && config.accessKeyId && config.tableName) {
+        configStatus.textContent = `Terhubung (${config.tableName})`;
+        configStatus.className = 'status-pill status-on';
+        applyConfigToSdk(config);
+      } else {
+        configStatus.textContent = 'Belum dikonfigurasi';
+        configStatus.className = 'status-pill status-off';
+      }
+    }
+
+    function fillConfigForm(config) {
+      document.getElementById('accessKeyId').value = config.accessKeyId || '';
+      document.getElementById('secretAccessKey').value = config.secretAccessKey || '';
+      document.getElementById('sessionToken').value = config.sessionToken || '';
+      document.getElementById('region').value = config.region || '';
+      document.getElementById('tableName').value = config.tableName || '';
+    }
+
+    // ====== Buka / tutup modal konfigurasi ======
+    function openConfigModal() {
+      const existing = getSavedConfig();
+      if (existing) fillConfigForm(existing);
+      configMessage.textContent = '';
+      configOverlay.hidden = false;
+    }
+
+    function closeConfigModal() {
+      configOverlay.hidden = true;
+    }
+
+    btnConfig.addEventListener('click', openConfigModal);
+    btnCloseConfig.addEventListener('click', closeConfigModal);
+    configOverlay.addEventListener('click', (e) => {
+      if (e.target === configOverlay) closeConfigModal();
+    });
+
+    // ====== Simpan konfigurasi ======
+    configForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const config = {
+        accessKeyId: document.getElementById('accessKeyId').value.trim(),
+        secretAccessKey: document.getElementById('secretAccessKey').value.trim(),
+        sessionToken: document.getElementById('sessionToken').value.trim(),
+        region: document.getElementById('region').value.trim(),
+        tableName: document.getElementById('tableName').value.trim()
+      };
+
+      if (!config.accessKeyId || !config.secretAccessKey || !config.region || !config.tableName) {
+        configMessage.textContent = 'Semua kolom wajib diisi, kecuali Session Token.';
+        configMessage.className = 'form-message err';
+        return;
+      }
+
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
+      applyConfigToSdk(config);
+      refreshConfigStatus();
+
+      configMessage.textContent = 'Konfigurasi tersimpan di perangkat ini.';
+      configMessage.className = 'form-message ok';
+
+      setTimeout(closeConfigModal, 900);
+    });
+
+    btnClearConfig.addEventListener('click', () => {
+      localStorage.removeItem(STORAGE_KEY);
+      configForm.reset();
+      refreshConfigStatus();
+      configMessage.textContent = 'Konfigurasi dihapus.';
+      configMessage.className = 'form-message ok';
+    });
+
+    // ====== Checkbox verifikasi mengunci tombol login ======
+    verifyCheck.addEventListener('change', () => {
+      btnLogin.disabled = !verifyCheck.checked;
+    });
+
+    // ====== Proses login: tulis catatan ke DynamoDB ======
+    loginForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+
+      if (!verifyCheck.checked) {
+        formMessage.textContent = 'Centang kotak verifikasi terlebih dahulu.';
+        formMessage.className = 'form-message err';
+        return;
+      }
+      if (!username || !password) {
+        formMessage.textContent = 'Username dan password wajib diisi.';
+        formMessage.className = 'form-message err';
+        return;
+      }
+
+      const config = getSavedConfig();
+      if (!config || !config.accessKeyId || !config.tableName) {
+        formMessage.textContent = 'Konfigurasi AWS belum diisi. Klik tombol "Konfigurasi AWS" di pojok kanan atas.';
+        formMessage.className = 'form-message err';
+        return;
+      }
+
+      btnLogin.disabled = true;
+      btnLogin.textContent = 'Memproses...';
+
+      const docClient = new AWS.DynamoDB.DocumentClient();
+      const item = {
+        loginId: `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+        username: username,
+        loginTime: new Date().toISOString(),
+        status: 'success'
+      };
+
+      docClient.put({ TableName: config.tableName, Item: item }, (err) => {
+        btnLogin.textContent = 'Masuk';
+        btnLogin.disabled = !verifyCheck.checked;
+
+        if (err) {
+          console.error(err);
+          formMessage.textContent = `Gagal mencatat login: ${err.message}`;
+          formMessage.className = 'form-message err';
+          return;
+        }
+
+        formMessage.textContent = `Login berhasil. Catatan tersimpan ke tabel "${config.tableName}".`;
+        formMessage.className = 'form-message ok';
+        loginForm.reset();
+        verifyCheck.checked = false;
+        btnLogin.disabled = true;
+      });
+    });
+
+    // ====== Inisialisasi ======
+    refreshConfigStatus();
+  </script>
+</body>
+</html>
