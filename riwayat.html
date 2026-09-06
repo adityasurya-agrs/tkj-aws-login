@@ -141,28 +141,88 @@ tbody tr:hover { background: rgba(61, 220, 151, 0.04); }
 }
 .error-state { color: var(--danger); }
 
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(6, 10, 14, 0.7);
+  align-items: center;
+  justify-content: center;
+  z-index: 50;
+  padding: 20px;
+}
+.modal-overlay.is-open { display: flex; }
+.modal-overlay:not(.is-open) { display: none; }
+
+.modal-box {
+  background: var(--bg-panel);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 28px;
+  width: 100%;
+  max-width: 460px;
+}
+.modal-head { display: flex; align-items: center; justify-content: space-between; }
+.icon-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+.icon-btn:hover { color: var(--text-main); }
+
+.field { display: flex; flex-direction: column; gap: 6px; margin-bottom: 14px; }
+.field span { font-size: 12.5px; color: var(--text-muted); }
+.field input {
+  background: var(--bg-card);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 11px 12px;
+  color: var(--text-main);
+  font-size: 14px;
+  font-family: 'IBM Plex Mono', monospace;
+  width: 100%;
+}
+.field input:focus { outline: none; border-color: var(--accent); }
+.field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+.form-message { min-height: 18px; font-size: 13px; margin: 6px 0 14px; }
+.form-message.ok { color: var(--accent); }
+.form-message.err { color: var(--danger); }
+
+.modal-actions { display: flex; justify-content: space-between; gap: 12px; }
+.btn-primary {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: #0B1710;
+  font-weight: 600;
+  font-size: 14.5px;
+  cursor: pointer;
+}
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--text-muted);
+  padding: 12px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13.5px;
+}
+.btn-ghost:hover { border-color: var(--danger); color: var(--danger); }
+
 @media (max-width: 720px) {
   .header-inner { padding: 16px 20px; }
   main { padding: 28px 20px 48px; }
   table, thead, tbody, th, td, tr { display: block; }
   thead { display: none; }
-  tbody tr {
-    border-bottom: 1px solid var(--line);
-    padding: 14px 20px;
-  }
-  tbody td {
-    border: none;
-    padding: 4px 0;
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-  }
-  tbody td::before {
-    content: attr(data-label);
-    color: var(--text-muted);
-    font-size: 11.5px;
-    text-transform: uppercase;
-  }
+  tbody tr { border-bottom: 1px solid var(--line); padding: 14px 20px; }
+  tbody td { border: none; padding: 4px 0; display: flex; justify-content: space-between; gap: 12px; }
+  tbody td::before { content: attr(data-label); color: var(--text-muted); font-size: 11.5px; text-transform: uppercase; }
+  .field-row { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -233,43 +293,43 @@ tbody tr:hover { background: rgba(61, 220, 151, 0.04); }
   </main>
 
   <!-- Modal Konfigurasi AWS -->
-  <div id="configOverlay" hidden style="position:fixed;inset:0;background:rgba(6,10,14,.7);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px;">
-    <div class="modal" style="background:var(--bg-panel);border:1px solid var(--line);border-radius:12px;padding:28px;width:100%;max-width:460px;">
-      <div style="display:flex;align-items:center;justify-content:space-between;">
+  <div id="configOverlay" class="modal-overlay">
+    <div class="modal-box">
+      <div class="modal-head">
         <h2 style="font-size:20px;">Konfigurasi AWS</h2>
-        <button type="button" id="btnCloseConfig" style="background:transparent;border:none;color:var(--text-muted);font-size:22px;line-height:1;cursor:pointer;">&times;</button>
+        <button type="button" id="btnCloseConfig" class="icon-btn" aria-label="Tutup">&times;</button>
       </div>
       <p style="color:var(--text-muted);font-size:13.5px;margin:8px 0 20px;line-height:1.5;">Kredensial ini dipakai browser untuk membaca catatan login dari DynamoDB. Disimpan hanya di perangkat ini (localStorage).</p>
 
       <form id="configForm">
-        <label style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
-          <span style="font-size:12.5px;color:var(--text-muted);">Access Key ID</span>
-          <input type="text" id="accessKeyId" autocomplete="off" required style="background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:11px 12px;color:var(--text-main);font-size:14px;font-family:'IBM Plex Mono',monospace;">
+        <label class="field">
+          <span>Access Key ID</span>
+          <input type="text" id="accessKeyId" autocomplete="off" required>
         </label>
-        <label style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
-          <span style="font-size:12.5px;color:var(--text-muted);">Secret Access Key</span>
-          <input type="password" id="secretAccessKey" autocomplete="off" required style="background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:11px 12px;color:var(--text-main);font-size:14px;font-family:'IBM Plex Mono',monospace;">
+        <label class="field">
+          <span>Secret Access Key</span>
+          <input type="password" id="secretAccessKey" autocomplete="off" required>
         </label>
-        <label style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
-          <span style="font-size:12.5px;color:var(--text-muted);">Session Token (opsional)</span>
-          <input type="password" id="sessionToken" autocomplete="off" style="background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:11px 12px;color:var(--text-main);font-size:14px;font-family:'IBM Plex Mono',monospace;">
+        <label class="field">
+          <span>Session Token (opsional)</span>
+          <input type="password" id="sessionToken" autocomplete="off">
         </label>
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-          <label style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
-            <span style="font-size:12.5px;color:var(--text-muted);">Region</span>
-            <input type="text" id="region" placeholder="ap-southeast-1" required style="background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:11px 12px;color:var(--text-main);font-size:14px;font-family:'IBM Plex Mono',monospace;">
+        <div class="field-row">
+          <label class="field">
+            <span>Region</span>
+            <input type="text" id="region" placeholder="ap-southeast-1" required>
           </label>
-          <label style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px;">
-            <span style="font-size:12.5px;color:var(--text-muted);">Nama Tabel DynamoDB</span>
-            <input type="text" id="tableName" placeholder="tkj-login-log" required style="background:var(--bg-card);border:1px solid var(--line);border-radius:8px;padding:11px 12px;color:var(--text-main);font-size:14px;font-family:'IBM Plex Mono',monospace;">
+          <label class="field">
+            <span>Nama Tabel DynamoDB</span>
+            <input type="text" id="tableName" placeholder="tkj-login-log" required>
           </label>
         </div>
 
-        <p id="configMessage" style="min-height:18px;font-size:13px;margin:6px 0 14px;"></p>
+        <p id="configMessage" class="form-message"></p>
 
-        <div style="display:flex;justify-content:space-between;gap:12px;">
-          <button type="button" id="btnClearConfig" style="background:transparent;border:1px solid var(--line);color:var(--text-muted);padding:12px 16px;border-radius:8px;cursor:pointer;font-size:13.5px;">Hapus konfigurasi</button>
-          <button type="submit" style="flex:1;padding:12px;border-radius:8px;border:none;background:var(--accent);color:#0B1710;font-weight:600;font-size:14.5px;cursor:pointer;">Simpan konfigurasi</button>
+        <div class="modal-actions">
+          <button type="button" id="btnClearConfig" class="btn-ghost">Hapus konfigurasi</button>
+          <button type="submit" class="btn-primary">Simpan konfigurasi</button>
         </div>
       </form>
     </div>
@@ -334,13 +394,17 @@ tbody tr:hover { background: rgba(61, 220, 151, 0.04); }
       const existing = getSavedConfig();
       if (existing) fillConfigForm(existing);
       configMessage.textContent = '';
-      configOverlay.hidden = false;
+      configOverlay.classList.add('is-open');
     }
-    function closeConfigModal() { configOverlay.hidden = true; }
+    function closeConfigModal() {
+      configOverlay.classList.remove('is-open');
+    }
 
     btnConfig.addEventListener('click', openConfigModal);
     btnCloseConfig.addEventListener('click', closeConfigModal);
-    configOverlay.addEventListener('click', (e) => { if (e.target === configOverlay) closeConfigModal(); });
+    configOverlay.addEventListener('click', (e) => {
+      if (e.target === configOverlay) closeConfigModal();
+    });
 
     configForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -353,14 +417,14 @@ tbody tr:hover { background: rgba(61, 220, 151, 0.04); }
       };
       if (!config.accessKeyId || !config.secretAccessKey || !config.region || !config.tableName) {
         configMessage.textContent = 'Semua kolom wajib diisi, kecuali Session Token.';
-        configMessage.style.color = 'var(--danger)';
+        configMessage.className = 'form-message err';
         return;
       }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(config));
       applyConfigToSdk(config);
       refreshConfigStatus();
       configMessage.textContent = 'Konfigurasi tersimpan.';
-      configMessage.style.color = 'var(--accent)';
+      configMessage.className = 'form-message ok';
       setTimeout(() => { closeConfigModal(); loadLoginHistory(); }, 700);
     });
 
@@ -369,7 +433,7 @@ tbody tr:hover { background: rgba(61, 220, 151, 0.04); }
       configForm.reset();
       refreshConfigStatus();
       configMessage.textContent = 'Konfigurasi dihapus.';
-      configMessage.style.color = 'var(--accent)';
+      configMessage.className = 'form-message ok';
     });
 
     function formatTanggal(isoString) {
