@@ -35,11 +35,16 @@ h1, h2 {
   margin: 0;
 }
 
-.config-trigger {
+.top-actions {
   position: fixed;
   top: 20px;
   right: 24px;
   z-index: 20;
+  display: flex;
+  gap: 10px;
+}
+
+.config-trigger, .nav-link {
   display: inline-flex;
   align-items: center;
   gap: 8px;
@@ -51,9 +56,10 @@ h1, h2 {
   font-size: 13px;
   font-family: 'IBM Plex Mono', monospace;
   cursor: pointer;
+  text-decoration: none;
   transition: border-color .15s ease, color .15s ease;
 }
-.config-trigger:hover { border-color: var(--accent); color: var(--accent); }
+.config-trigger:hover, .nav-link:hover { border-color: var(--accent); color: var(--accent); }
 .config-trigger svg { flex-shrink: 0; }
 
 .stage {
@@ -215,9 +221,7 @@ h1, h2 {
   z-index: 50;
   padding: 20px;
 }
-.overlay[hidden] {
-  display: none;
-}
+.overlay[hidden] { display: none; }
 .modal {
   background: var(--bg-panel);
   border: 1px solid var(--line);
@@ -244,6 +248,7 @@ h1, h2 {
   .brand-panel { padding: 48px 28px; border-right: none; border-bottom: 1px solid var(--line); }
   .form-panel { padding: 32px 24px; }
   .field-row { grid-template-columns: 1fr; }
+  .top-actions { position: static; justify-content: flex-end; padding: 16px 20px 0; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -253,13 +258,22 @@ h1, h2 {
 </head>
 <body>
 
-  <button id="btnConfig" class="config-trigger" type="button">
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <circle cx="12" cy="12" r="3"></circle>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-    </svg>
-    Konfigurasi AWS
-  </button>
+  <div class="top-actions">
+    <a href="riwayat.html" class="nav-link">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M3 3v18h18"></path>
+        <path d="M18 17V9M13 17V5M8 17v-3"></path>
+      </svg>
+      Riwayat Login
+    </a>
+    <button id="btnConfig" class="config-trigger" type="button">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+      </svg>
+      Konfigurasi AWS
+    </button>
+  </div>
 
   <main class="stage">
 
@@ -332,7 +346,7 @@ h1, h2 {
         <h2 id="configTitle">Konfigurasi AWS</h2>
         <button type="button" id="btnCloseConfig" class="icon-btn" aria-label="Tutup">&times;</button>
       </div>
-      <p class="sub">Kredensial ini dipakai browser untuk menulis catatan login ke DynamoDB. Disimpan hanya di perangkat ini (localStorage).</p>
+      <p class="sub">Kredensial ini dipakai browser untuk menulis dan membaca catatan login ke/dari DynamoDB. Disimpan hanya di perangkat ini (localStorage).</p>
 
       <form id="configForm">
         <label class="field">
@@ -370,7 +384,6 @@ h1, h2 {
 
   <script src="https://sdk.amazonaws.com/js/aws-sdk-2.1691.0.min.js"></script>
   <script>
-    // ====== Elemen DOM ======
     const btnConfig = document.getElementById('btnConfig');
     const configOverlay = document.getElementById('configOverlay');
     const btnCloseConfig = document.getElementById('btnCloseConfig');
@@ -386,7 +399,6 @@ h1, h2 {
 
     const STORAGE_KEY = 'tkjAwsConfig';
 
-    // ====== Konfigurasi AWS tersimpan ======
     function getSavedConfig() {
       const raw = localStorage.getItem(STORAGE_KEY);
       return raw ? JSON.parse(raw) : null;
@@ -421,7 +433,6 @@ h1, h2 {
       document.getElementById('tableName').value = config.tableName || '';
     }
 
-    // ====== Buka / tutup modal konfigurasi ======
     function openConfigModal() {
       const existing = getSavedConfig();
       if (existing) fillConfigForm(existing);
@@ -439,7 +450,6 @@ h1, h2 {
       if (e.target === configOverlay) closeConfigModal();
     });
 
-    // ====== Simpan konfigurasi ======
     configForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
@@ -475,12 +485,10 @@ h1, h2 {
       configMessage.className = 'form-message ok';
     });
 
-    // ====== Checkbox verifikasi mengunci tombol login ======
     verifyCheck.addEventListener('change', () => {
       btnLogin.disabled = !verifyCheck.checked;
     });
 
-    // ====== Proses login: tulis catatan ke DynamoDB ======
     loginForm.addEventListener('submit', (e) => {
       e.preventDefault();
 
@@ -535,7 +543,6 @@ h1, h2 {
       });
     });
 
-    // ====== Inisialisasi ======
     refreshConfigStatus();
   </script>
 </body>
